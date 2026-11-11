@@ -1,12 +1,12 @@
 # Bivouac Nzilo 2026
 
-<img src="https://raw.githubusercontent.com/Bienvenu945/BIVOUAC-NZILO-2026/main/images/communes/plus_822.jpg" alt="Bivouac Nzilo 2026" width="100%">
+<img src="https://raw.githubusercontent.com/Bienvenu945/79Ans-KIRO-CONGO/main/images/communes/plus_822.jpg" alt="Bivouac Nzilo 2026" width="100%">
 
 **Une semaine de foi, de fraternité et d'aventure.**
 Groupe KIRO Bakanja, paroisse Sainte Barbe et Saint Éloi, décanat de Kolwezi.
 Cité de Nzilo (Lualaba, RDC), du 9 au 16 août 2026.
 
-[Visiter le site](https://bienvenu945.github.io/BIVOUAC-NZILO-2026/) | [Voir le code source](https://github.com/Bienvenu945/BIVOUAC-NZILO-2026)
+[Visiter le site](https://bienvenu945.github.io/79Ans-KIRO-CONGO/) | [Voir le code source](https://github.com/Bienvenu945/79Ans-KIRO-CONGO)
 
 ---
 
@@ -20,14 +20,14 @@ Chaque section a sa couleur, son dossier de photos et sa propre bande sur le sit
 
 <table>
   <tr>
-    <td align="center"><img src="https://raw.githubusercontent.com/Bienvenu945/BIVOUAC-NZILO-2026/main/images/communes/plus_822.jpg" alt="Communes" width="100%"><br><b>Communes</b><br><code>images/communes/</code><br>jaune</td>
-    <td align="center"><img src="https://raw.githubusercontent.com/Bienvenu945/BIVOUAC-NZILO-2026/main/images/bakayouki/photo_062.JPG" alt="Bakayouki" width="100%"><br><b>Bakayouki</b><br><code>images/bakayouki/</code><br>vert</td>
-    <td align="center"><img src="https://raw.githubusercontent.com/Bienvenu945/BIVOUAC-NZILO-2026/main/images/youpi/photo_006.JPG" alt="Youpi" width="100%"><br><b>Youpi</b><br><code>images/youpi/</code><br>rouge</td>
+    <td align="center"><img src="https://raw.githubusercontent.com/Bienvenu945/79Ans-KIRO-CONGO/main/images/communes/plus_822.jpg" alt="Communes" width="100%"><br><b>Communes</b><br><code>images/communes/</code><br>jaune</td>
+    <td align="center"><img src="https://raw.githubusercontent.com/Bienvenu945/79Ans-KIRO-CONGO/main/images/bakayouki/photo_062.JPG" alt="Bakayouki" width="100%"><br><b>Bakayouki</b><br><code>images/bakayouki/</code><br>vert</td>
+    <td align="center"><img src="https://raw.githubusercontent.com/Bienvenu945/79Ans-KIRO-CONGO/main/images/youpi/photo_006.JPG" alt="Youpi" width="100%"><br><b>Youpi</b><br><code>images/youpi/</code><br>rouge</td>
   </tr>
   <tr>
-    <td align="center"><img src="https://raw.githubusercontent.com/Bienvenu945/BIVOUAC-NZILO-2026/main/images/gen/plus_1093.jpg" alt="Gen" width="100%"><br><b>Gen</b><br><code>images/gen/</code><br>bleu</td>
-    <td align="center"><img src="https://raw.githubusercontent.com/Bienvenu945/BIVOUAC-NZILO-2026/main/images/aspirant/photo_001.JPG" alt="Aspirant" width="100%"><br><b>Aspirant</b><br><code>images/aspirant/</code><br>orange</td>
-    <td align="center"><img src="https://raw.githubusercontent.com/Bienvenu945/BIVOUAC-NZILO-2026/main/images/dirigeant/photo_005.JPG" alt="Dirigeant" width="100%"><br><b>Dirigeant</b><br><code>images/dirigeant/</code><br>blanc</td>
+    <td align="center"><img src="https://raw.githubusercontent.com/Bienvenu945/79Ans-KIRO-CONGO/main/images/gen/plus_1093.jpg" alt="Gen" width="100%"><br><b>Gen</b><br><code>images/gen/</code><br>bleu</td>
+    <td align="center"><img src="https://raw.githubusercontent.com/Bienvenu945/79Ans-KIRO-CONGO/main/images/aspirant/photo_001.JPG" alt="Aspirant" width="100%"><br><b>Aspirant</b><br><code>images/aspirant/</code><br>orange</td>
+    <td align="center"><img src="https://raw.githubusercontent.com/Bienvenu945/79Ans-KIRO-CONGO/main/images/dirigeant/photo_005.JPG" alt="Dirigeant" width="100%"><br><b>Dirigeant</b><br><code>images/dirigeant/</code><br>blanc</td>
   </tr>
 </table>
 
