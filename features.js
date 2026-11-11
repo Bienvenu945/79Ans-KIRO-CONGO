@@ -268,6 +268,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const confetti = document.createElement("span");
 
+        confetti.style.display = "block";
+
         confetti.style.position = "absolute";
         confetti.style.left = Math.random() * 100 + "%";
         confetti.style.top = "-20px";
