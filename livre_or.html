@@ -1,0 +1,534 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#102f2a">
+  <title>Modération du livre d’or — BIVOUAC NZILO</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./supabase-config.js"></script>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0b1715;
+      --panel: #132521;
+      --line: #29453d;
+      --text: #f0f5f1;
+      --muted: #a7b9b0;
+      --green: #a6f0bd;
+      --red: #ffaaa5;
+      --yellow: #ffdf8c;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 22px 14px 48px;
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.55 system-ui, sans-serif;
+    }
+
+    main {
+      max-width: 850px;
+      margin: auto;
+    }
+
+    h1 { font-size: clamp(1.6rem, 6vw, 2.5rem); line-height: 1.2; }
+    h2 { font-size: 1.15rem; margin-top: 0; }
+    p { overflow-wrap: anywhere; }
+
+    .muted { color: var(--muted); }
+
+    .panel, .comment {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      margin: 16px 0;
+    }
+
+    label {
+      display: block;
+      margin: 12px 0 6px;
+      font-weight: 650;
+    }
+
+    input {
+      display: block;
+      width: 100%;
+      padding: 13px;
+      border-radius: 9px;
+      border: 1px solid var(--line);
+      background: #091310;
+      color: var(--text);
+      font: inherit;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 11px 15px;
+      margin: 8px 8px 0 0;
+      color: var(--text);
+      background: #203a31;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button.primary {
+      background: var(--green);
+      color: #10251a;
+      border-color: transparent;
+    }
+
+    button.reject {
+      background: #482321;
+      color: #ffd8d4;
+      border-color: #75413d;
+    }
+
+    button:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    #notice {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    #notice[data-type="error"] {
+      color: var(--red);
+      border-color: #75413d;
+    }
+
+    #notice[data-type="success"] { color: var(--green); }
+    #notice[data-type="info"] { color: var(--yellow); }
+
+    .comment h3 { margin: 0 0 5px; }
+    .comment .date { font-size: .88rem; color: var(--muted); }
+    .comment .message { white-space: pre-wrap; overflow-wrap: anywhere; }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    [hidden] { display: none !important; }
+  </style>
+</head>
+
+<body>
+<main>
+  <header>
+    <p class="muted">BIVOUAC NZILO 2026 · ESPACE PRIVÉ</p>
+    <h1>Modération du livre d’or</h1>
+    <p class="muted">
+      Examine les souvenirs envoyés avant de les rendre visibles aux visiteurs.
+    </p>
+  </header>
+
+  <div id="notice" role="status" aria-live="polite" data-type="info">
+    Initialisation de Supabase…
+  </div>
+
+  <section id="login-panel" class="panel">
+    <h2>Connexion administrateur</h2>
+
+    <form id="login-form">
+      <label for="email">Adresse e-mail</label>
+      <input id="email" type="email" autocomplete="username"
+             required placeholder="admin@exemple.com">
+
+      <label for="password">Mot de passe</label>
+      <input id="password" type="password"
+             autocomplete="current-password" required>
+
+      <button class="primary" id="login-button" type="submit">
+        Se connecter
+      </button>
+    </form>
+  </section>
+
+  <section id="admin-panel" hidden>
+    <div class="panel">
+      <p id="admin-identity" class="muted"></p>
+      <button id="refresh-button" type="button">Actualiser les commentaires</button>
+      <button id="logout-button" type="button">Se déconnecter</button>
+    </div>
+
+    <h2>Commentaires en attente</h2>
+    <p id="count" class="muted">Chargement…</p>
+    <div id="comments"></div>
+  </section>
+</main>
+
+<script>
+(() => {
+  "use strict";
+
+  const $ = selector => document.querySelector(selector);
+
+  const notice = $("#notice");
+  const loginPanel = $("#login-panel");
+  const adminPanel = $("#admin-panel");
+  const commentsBox = $("#comments");
+  const count = $("#count");
+  const loginButton = $("#login-button");
+  const refreshButton = $("#refresh-button");
+
+  let db = null;
+  let busy = false;
+
+  function showNotice(message, type = "info") {
+    notice.textContent = message;
+    notice.dataset.type = type;
+  }
+
+  function showLogin() {
+    loginPanel.hidden = false;
+    adminPanel.hidden = true;
+  }
+
+  function showAdmin(user) {
+    loginPanel.hidden = true;
+    adminPanel.hidden = false;
+    $("#admin-identity").textContent =
+      "Connecté : " + (user.email || user.id);
+  }
+
+  function displayError(prefix, error) {
+    console.error(prefix, error);
+    const details = [
+      error?.message,
+      error?.details,
+      error?.hint,
+      error?.code ? "Code : " + error.code : ""
+    ].filter(Boolean).join("\n");
+
+    showNotice(prefix + (details ? "\n" + details : ""), "error");
+  }
+
+  function getConfig() {
+    const config = window.BIVOUAC_SUPABASE_CONFIG;
+
+    if (!config) {
+      throw new Error(
+        "BIVOUAC_SUPABASE_CONFIG est introuvable. Vérifie supabase-config.js."
+      );
+    }
+
+    if (!config.url || !config.anonKey) {
+      throw new Error(
+        "L'URL Supabase ou la clé publique anonKey manque dans supabase-config.js."
+      );
+    }
+
+    return config;
+  }
+
+  async function verifyAdmin() {
+    const { data: sessionData, error: sessionError } =
+      await db.auth.getSession();
+
+    if (sessionError) throw sessionError;
+
+    const user = sessionData?.session?.user;
+
+    if (!user) {
+      showLogin();
+      showNotice(
+        "Connecte-toi avec le compte administrateur Supabase.",
+        "info"
+      );
+      return false;
+    }
+
+    showNotice("Vérification des droits administrateur…", "info");
+
+    const { data, error } = await db.rpc("is_admin");
+
+    if (error) {
+      showLogin();
+      throw new Error(
+        "Impossible de vérifier is_admin(). Vérifie que cette fonction existe " +
+        "dans Supabase et qu'elle autorise ce compte. Détail : " +
+        error.message
+      );
+    }
+
+    if (data !== true) {
+      await db.auth.signOut();
+      showLogin();
+      showNotice(
+        "Accès refusé : ce compte n'est pas reconnu comme administrateur.",
+        "error"
+      );
+      return false;
+    }
+
+    showAdmin(user);
+    return true;
+  }
+
+  
+async function loadComments() {
+  if (busy) return;
+
+  busy = true;
+  refreshButton.disabled = true;
+  commentsBox.replaceChildren();
+  count.textContent = "Chargement de tous les commentaires…";
+
+  try {
+    if (!(await verifyAdmin())) {
+      count.textContent = "";
+      return;
+    }
+
+    // Diagnostic : on ne filtre plus par statut.
+    const { data, error } = await db
+      .from("guestbook")
+      .select("id, name, message, created_at, status")
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    count.textContent =
+      `${data.length} commentaire(s) trouvé(s), tous statuts confondus.`;
+
+    if (data.length === 0) {
+      showNotice(
+        "Aucun commentaire visible. Vérifie les permissions SELECT RLS de la table guestbook.",
+        "info"
+      );
+
+      const empty = document.createElement("p");
+      empty.className = "panel muted";
+      empty.textContent =
+        "Aucun commentaire accessible avec ce compte.";
+      commentsBox.append(empty);
+      return;
+    }
+
+    for (const item of data) {
+      const card = makeComment(item);
+
+      // Afficher clairement le statut de chaque commentaire.
+      const status = card.querySelector(".muted");
+      if (status) {
+        status.textContent = "Statut actuel : " + item.status;
+      }
+
+      // Les boutons de modération ne sont proposés que pour pending.
+      if (item.status !== "pending") {
+        card.querySelector(".actions")?.remove();
+      }
+
+      commentsBox.append(card);
+    }
+
+    showNotice(
+      "Chargement réussi. Tous les commentaires accessibles sont affichés.",
+      "success"
+    );
+
+  } catch (error) {
+    count.textContent = "Échec du chargement.";
+    displayError("Impossible de charger les commentaires.", error);
+  } finally {
+    busy = false;
+    refreshButton.disabled = false;
+  }
+}
+
+
+  function makeComment(item) {
+    const article = document.createElement("article");
+    article.className = "comment";
+
+    const title = document.createElement("h3");
+    title.textContent = item.name || "Anonyme";
+
+    const date = document.createElement("p");
+    date.className = "date";
+    const parsedDate = new Date(item.created_at);
+    date.textContent = Number.isNaN(parsedDate.getTime())
+      ? "Date inconnue"
+      : parsedDate.toLocaleString("fr-FR");
+
+    const message = document.createElement("p");
+    message.className = "message";
+    message.textContent = item.message || "";
+
+    const status = document.createElement("p");
+    status.className = "muted";
+    status.textContent = "Statut : " + item.status;
+
+    const actions = document.createElement("div");
+    actions.className = "actions";
+
+    const publish = document.createElement("button");
+    publish.className = "primary";
+    publish.type = "button";
+    publish.textContent = "✓ Publier";
+
+    const reject = document.createElement("button");
+    reject.className = "reject";
+    reject.type = "button";
+    reject.textContent = "✕ Refuser";
+
+    publish.addEventListener("click", () =>
+      moderate(item, "published", publish, reject)
+    );
+
+    reject.addEventListener("click", () =>
+      moderate(item, "rejected", publish, reject)
+    );
+
+    actions.append(publish, reject);
+    article.append(title, date, message, status, actions);
+
+    return article;
+  }
+
+  async function moderate(item, newStatus, publishButton, rejectButton) {
+    if (busy) return;
+
+    const action = newStatus === "published" ? "publier" : "refuser";
+
+    if (!confirm("Veux-tu vraiment " + action + " le commentaire de " +
+                 (item.name || "cet utilisateur") + " ?")) {
+      return;
+    }
+
+    busy = true;
+    publishButton.disabled = true;
+    rejectButton.disabled = true;
+
+    try {
+      if (!(await verifyAdmin())) return;
+
+      const { data, error } = await db
+        .from("guestbook")
+        .update({ status: newStatus })
+        .eq("id", item.id)
+        .eq("status", "pending")
+        .select("id");
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        throw new Error(
+          "Aucune ligne modifiée. Vérifie les politiques UPDATE RLS " +
+          "et confirme que le commentaire est toujours pending."
+        );
+      }
+
+      showNotice(
+        newStatus === "published"
+          ? "Commentaire publié avec succès."
+          : "Commentaire refusé.",
+        "success"
+      );
+
+      await loadComments();
+
+    } catch (error) {
+      displayError("La modération a échoué.", error);
+    } finally {
+      busy = false;
+      publishButton.disabled = false;
+      rejectButton.disabled = false;
+    }
+  }
+
+  $("#login-form").addEventListener("submit", async event => {
+    event.preventDefault();
+
+    if (!db) {
+      showNotice("Supabase n'est pas initialisé.", "error");
+      return;
+    }
+
+    loginButton.disabled = true;
+    showNotice("Connexion en cours…", "info");
+
+    try {
+      const email = $("#email").value.trim();
+      const password = $("#password").value;
+
+      const { error } = await db.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) throw error;
+
+      await loadComments();
+
+    } catch (error) {
+      displayError("Connexion impossible.", error);
+    } finally {
+      loginButton.disabled = false;
+    }
+  });
+
+  refreshButton.addEventListener("click", loadComments);
+
+  $("#logout-button").addEventListener("click", async () => {
+    try {
+      const { error } = await db.auth.signOut();
+      if (error) throw error;
+
+      showLogin();
+      commentsBox.replaceChildren();
+      count.textContent = "";
+      showNotice("Session fermée.", "success");
+
+    } catch (error) {
+      displayError("Déconnexion impossible.", error);
+    }
+  });
+
+  async function init() {
+    try {
+      if (!window.supabase?.createClient) {
+        throw new Error(
+          "La bibliothèque Supabase n'a pas été chargée. Vérifie ta connexion Internet."
+        );
+      }
+
+      const config = getConfig();
+
+      db = window.supabase.createClient(config.url, config.anonKey);
+
+      const { data, error } = await db.auth.getSession();
+      if (error) throw error;
+
+      if (data?.session?.user) {
+        await loadComments();
+      } else {
+        showLogin();
+        showNotice(
+          "Supabase est prêt. Connecte-toi pour consulter les commentaires.",
+          "success"
+        );
+      }
+
+    } catch (error) {
+      displayError("Initialisation impossible.", error);
+    }
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
