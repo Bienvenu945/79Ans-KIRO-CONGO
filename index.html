@@ -2,9 +2,9 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=0.5">
-<meta name="theme-color" content="#0E2F2C">
-<title>79 ans KIRO CONGO — KIRO Bakanja</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#03100D">
+<title>Bivouac Nzilo 2026 — KIRO Bakanja</title>
 <meta name="description" content="Bivouac KIRO Nzilo 2026 : une semaine de foi, de fraternité et d'aventure, du 9 au 16 août à Nzilo, avec le groupe KIRO Bakanja de la paroisse Sainte Barbe et Saint Éloi.">
 <meta property="og:title" content="Bivouac Nzilo 2026 — KIRO Bakanja">
 <meta property="og:description" content="Une semaine de foi, de fraternité et d'aventure, du 9 au 16 août 2026 à Nzilo.">
@@ -13,7 +13,7 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Hanken+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="features.css">
 </head>
@@ -23,7 +23,7 @@
 <header class="top">
   <a class="brand" href="#">KIRO Bakanja</a>
   <nav aria-label="Navigation principale">
-    <!--<a href="#infos">L'édition</a>-->
+    <a href="#infos">L'édition</a>
     <a href="#galeries">Les photos</a>
     <a href="#livre-or">Livre d'or</a>
   </nav>
@@ -31,23 +31,12 @@
 
 <main>
   <section class="hero" aria-label="Introduction">
-
-    <h1>
-        <span class="anniversary">79 ANS</span>
-        <br>
-        Kiro Congo
-    </h1>
-
-    <p class="hero-sub">
-        Du 11-11-1947 au 11-11-2026 🎉 79 ans de foi, de fraternité et d'engagement.
-        Une flamme qui ne s'éteint pas ! 💚
-    </p>
-
+    <h1>Bivouac<br>Nzilo 2026</h1>
+    <p class="hero-sub">Du 9 au 16 août, une semaine de foi, de fraternité et d'aventure. Choisis ta section pour revoir les photos, ou <a href="#vos-photos">partage les tiennes</a>.</p>
     <div class="bars" id="bars"></div>
-
   </section>
 
-  <!-- <section class="info" id="infos">
+  <section class="info" id="infos">
     <p class="dates">9 au 16 août 2026</p>
     <div class="info-text">
       <p>Le Bivouac est le grand rassemblement annuel du groupe KIRO Bakanja de la paroisse Sainte Barbe et Saint Éloi. Une semaine loin du quotidien, rythmée par la prière, les jeux, les chants, les feux de camp et la vie en communauté.</p>
@@ -58,13 +47,13 @@
       <div><dt>Groupe</dt><dd>KIRO Bakanja, décanat de Kolwezi, diocèse de Kolwezi</dd></div>
       <div><dt>Statut</dt><dd>Édition 2026 terminée</dd></div>
     </dl>
-  </section>-->
+  </section>
 
   <section class="tools-panel" aria-labelledby="search-title">
     <div class="tools-heading">
       <p class="eyebrow">Retrouver un souvenir</p>
       <h2 id="search-title">Explorer les photos</h2>
-      <p>Choisis une section pour retrouver les souvenirs du groupe.</p>
+      <p>Choisis une section pour retrouver les souvenirs du bivouac.</p>
     </div>
     <div class="photo-filters">
       <label for="section-filter">Section</label>
@@ -85,7 +74,7 @@
 
   <section class="shared" id="vos-photos" aria-labelledby="shared-title">
     <div class="cat-head">
-      <div><h2 id="shared-title">Photos des participants</h2><p>Tu as des photos du groupe ? Envoie-les : elles s'affichent ici après validation.</p></div>
+      <div><h2 id="shared-title">Photos des participants</h2><p>Tu as des photos du bivouac ? Envoie-les : elles s'affichent ici après validation.</p></div>
       <button type="button" class="feature-button" id="photo-open">+ Ajouter une photo</button>
     </div>
     <p class="note" id="shared-note">Chargement des photos…</p>
@@ -96,7 +85,7 @@
     <div class="guestbook-intro">
       <p class="eyebrow">Nos souvenirs continuent</p>
       <h2>Livre d'or</h2>
-      <p>Un mot, une gratitude ou un souvenir de KIRO : laisse une trace de cette belle aventure.</p>
+      <p>Un mot, une gratitude ou un souvenir de Nzilo : laisse une trace de cette belle aventure.</p>
       <p class="local-note">Les messages envoyés sont partagés avec les visiteurs après validation par un modérateur. N'indique aucune information privée.</p>
     </div>
     <form id="guestbook-form" class="guestbook-form">
@@ -119,14 +108,14 @@
 </main>
 
 <footer>
-  <p class="foot-title">Merci à tous ceux qui ont visité cette page🙏</p>
+  <p class="foot-title">Merci à tous ceux qui ont vécu cette édition dans la joie 🙏</p>
   <p>KIRO Congo, groupe Bakanja<br>Paroisse Sainte Barbe et Saint Éloi, décanat de Kolwezi</p>
 </footer>
 
 <div class="audio-player" role="group" aria-label="Musique d'ambiance">
   <span class="audio-note" aria-hidden="true">🪇🥁</span>
   <div class="audio-controls">
-    <strong>Ambiance</strong>
+    <strong>Ambiance du bivouac</strong>
     <audio id="ambience-audio" controls preload="metadata">
       <source
         src="https://bienvenu945.github.io/79Ans-KIRO-CONGO/assets/audio/ambiance.mp3"
